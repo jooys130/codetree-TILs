@@ -31,12 +31,13 @@ public class Main {
             for (int j = 0; j < M; j++) {
                 map[i][j] = Integer.parseInt(st.nextToken());
                 if (map[i][j] != 0) {
-                    // 공격력 0이하되면 더이상 공격할 수 없음
+                    // 공격력 0 이하되면 더이상 공격할 수 없음
                     attackCandi.add(new Node(map[i][j], i, j, i+j, order[i][j]));
                     totalCnt++;
                 }
             }
         }
+        // go()
         while (K-- > 0) {
             // 0이 아닌 포탑 1개 되면 즉시 중지
             if (totalCnt == 0) break; // 즉시 중지이므로 추가해야할수도
@@ -140,11 +141,11 @@ public class Main {
         int ny = cur.y + dy[d];
         while(!ways.isEmpty()) {
             Pos next = ways.pop();
+            checked[next.x][next.y] = true;
             // System.out.println(next);
             if (next.dir == -1) break;
             if (next.x == nx && next.y == ny) {
                 map[nx][ny] -= attacker.value / 2;
-                checked[nx][ny] = true;
                 d = (next.dir+2) % 4;
                 nx += dx[d]; ny += dy[d];
             }
@@ -204,28 +205,4 @@ public class Main {
             return "(" + x + " "+ y + " "  + dir + ")";
         }
     }
-    /*
-    public static void dfs(int x, int y) {
-        ways.add(new Pos(x, y)); // 최단 경로 저장
-        visited[x][y] = true;
-        if (x == attacked.x && y == attacked.y) {
-            reachable = true;
-            return;
-        }
-        for (int i = 0; i < 4; i++) {
-            // 가장자리는 이어짐  (2, 4) -> (2, 1)
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            if (nx < 0 || nx >= N || ny < 0 || ny >= M) {
-                continue;
-                // nx = (nx + N) % N;
-                // ny = (ny + M) % M;
-            }
-            // 값이 0인 곳 지나갈 수 없음
-            if (map[nx][ny] != 0 && !visited[nx][ny]) {
-                dfs(nx, ny);
-            }
-        }
-    }
-    */
 }
