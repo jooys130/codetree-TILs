@@ -10,11 +10,10 @@ public class Main {
     static boolean[][] checked; // 공격 관련 정보 저장
     static int[][] order; // 순서 저장
     static List<Node> attackCandi;
-    static int totalCnt;
     static Node attacker, attacked; // 공격자, 공격받는 거 저장
     static Stack<Pos> ways; // 가는 길에 만난 포탑 위치 저장
     static boolean reachable;
-    static Queue<Pos> targets; // 무조건 맨 앞에가 타겟이 되도록 구성
+    // static Queue<Pos> targets; // 무조건 맨 앞에가 타겟이 되도록 구성
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -25,7 +24,7 @@ public class Main {
         order = new int[N][M]; // 숫자가 클수록 빠른 거
         attackCandi = new ArrayList<>();
         ways = new Stack<>();
-        targets = new ArrayDeque<>();
+        // targets = new ArrayDeque<>();
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
@@ -33,18 +32,17 @@ public class Main {
                 if (map[i][j] != 0) {
                     // 공격력 0 이하되면 더이상 공격할 수 없음
                     attackCandi.add(new Node(map[i][j], i, j, i+j, order[i][j]));
-                    totalCnt++;
                 }
             }
         }
         // go()
         while (K-- > 0) {
             // 0이 아닌 포탑 1개 되면 즉시 중지
-            if (totalCnt == 0) break; // 즉시 중지이므로 추가해야할수도
+            if (attackCandi.size() == 0) break; // 즉시 중지이므로 추가해야할수도
             checked = new boolean[N][M];
             // 1. 가장 약한 포탑을 공격자로 선정하여 N+M만큼 공격력 증가
             Collections.sort(attackCandi);
-            // System.out.println("+======");
+            // System.out.println("======");
             // System.out.println(attackCandi);
             attacker = attackCandi.get(0);
             // 2. 공격자가 가장 강한 포탑 찾아서 공격
@@ -57,7 +55,7 @@ public class Main {
             order[attacker.x][attacker.y] = K;
             // System.out.println("공격자" + attacker);
             // System.out.println("받는자" + attacked);
-            checkReachable();
+            bfs();
             if (reachable) {
                 laser();
             } else {
@@ -94,17 +92,13 @@ public class Main {
         }
         System.out.println(ans);
     }
-    public static void checkReachable() {
+    public static void bfs() {
         // 공격자 위치에서 공격 대상 포탑까지 "최단 경로"인 곳에 대해서
         // (**) 경로 기억해야하니까 dfs?? 근데 또 최단 경로여야 하는데..?
         reachable = false;
         visited = new boolean[N][M];
-        bfs();
-        // System.out.println(reachable);
-    }
-    public static void bfs() {
         Queue<Pos> q = new ArrayDeque<>();
-        q.add(new Pos(attacker.x, attacker.y, -1));
+        q.add(new Pos(attacker.x, attacker.y, -1, 0));
         visited[attacker.x][attacker.y] = true;
         while(!q.isEmpty()) {
             Pos cur = q.poll();
@@ -123,10 +117,11 @@ public class Main {
                 }
                 // 값이 0인 곳 지나갈 수 없음
                 if (map[nx][ny] == 0 || visited[nx][ny]) continue;
-                q.add(new Pos(nx, ny, i));
+                q.add(new Pos(nx, ny, i, cur.dis+1));
                 visited[nx][ny] = true;
             }   
         }
+        // System.out.println(reachable);
     }
     public static void laser() {
         // (1)  레이저 공격 시도
@@ -135,21 +130,34 @@ public class Main {
         // System.out.println("start" + cur);
         map[cur.x][cur.y] -= attacker.value;
         checked[cur.x][cur.y] = true;
+        // System.out.println("최단 거리: " + cur.dis);
         // attacked.value -= attacker.value;
+        int cnt = 0;
         int d = (cur.dir+2)%4;
-        int nx = cur.x + dx[d];
-        int ny = cur.y + dy[d];
+        int nx = (cur.x + dx[d]);
+        int ny = (cur.y + dy[d]);
+        if (nx < 0) nx = N - 1;
+        if (nx >= N) nx = 0;
+        if (ny < 0 ) ny = M-1;
+        if (ny >= M) ny = 0;
         while(!ways.isEmpty()) {
             Pos next = ways.pop();
-            checked[next.x][next.y] = true;
             // System.out.println(next);
             if (next.dir == -1) break;
+            // System.out.println(nx + " " + ny);
             if (next.x == nx && next.y == ny) {
                 map[nx][ny] -= attacker.value / 2;
+                checked[nx][ny] = true;
                 d = (next.dir+2) % 4;
-                nx += dx[d]; ny += dy[d];
+                nx += (dx[d]); ny += dy[d];
+                if (nx < 0) nx = N - 1;
+                if (nx >= N) nx = 0;
+                if (ny < 0 ) ny = M-1;
+                if (ny >= M) ny = 0;
+                cnt++;
             }
         }
+        // System.out.println("동일한가? " + cnt);
     }
     public static void potan() {
         // (2) 최단 경로가 존재하지 않으면 포탄 공격
@@ -194,15 +202,16 @@ public class Main {
         }
     }
     static class Pos {
-        int x, y, dir;
-        Pos(int x, int y, int dir) {
+        int x, y, dir, dis;
+        Pos(int x, int y, int dir, int dis) {
             this.x = x;
             this.y = y;
             this.dir = dir;
+            this.dis = dis;
         }
         @Override
         public String toString() {
-            return "(" + x + " "+ y + " "  + dir + ")";
+            return "(" + x + " "+ y + " "  + dir + " " + dis + ")";
         }
     }
 }
