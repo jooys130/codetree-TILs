@@ -43,6 +43,8 @@ public class Main {
             checked = new boolean[N][M];
             // 1. 가장 약한 포탑을 공격자로 선정하여 N+M만큼 공격력 증가
             Collections.sort(attackCandi);
+            // System.out.println("+======");
+            // System.out.println(attackCandi);
             attacker = attackCandi.get(0);
             // 2. 공격자가 가장 강한 포탑 찾아서 공격
             attacked = attackCandi.get(attackCandi.size()-1);
@@ -62,18 +64,20 @@ public class Main {
             }
             // 3. 공격력이 0 이하면 부서짐 => attckCandi 갱신
             attackCandi.clear();
-            for (int i = 0; i < N; i++) {
-                for (int j = 0; j <M; j++) {
-                    if (map[i][j] != 0) {
-                        attackCandi.add(new Node(map[i][j], i, j, i+j, order[i][j]));
-                    }
-                }
-            }
             // 4. 포탑 정비
                 //  공격과 무관한 곳은 공격력 1씩 증가
             for (int i = 0; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     if (!checked[i][j] && map[i][j] != 0) map[i][j]++;
+                }
+            }
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j <M; j++) {
+                    if (map[i][j] > 0) {
+                        attackCandi.add(new Node(map[i][j], i, j, i+j, order[i][j]));
+                    } else {
+                        map[i][j] = 0;
+                    }
                 }
             }
             // for (int i= 0; i < N; i++) {
@@ -95,6 +99,7 @@ public class Main {
         reachable = false;
         visited = new boolean[N][M];
         bfs();
+        // System.out.println(reachable);
     }
     public static void bfs() {
         Queue<Pos> q = new ArrayDeque<>();
@@ -180,7 +185,7 @@ public class Main {
                 }
                 return o.order - this.order;
             }
-            return this.value - o.order;
+            return this.value - o.value;
         }
         @Override
         public String toString() {
