@@ -165,7 +165,8 @@ public class Main {
         // 총 있다면 총 획득
         Player p = players[k];
         if (guns[p.x][p.y].size() != 0) {
-            Collections.reverse(guns[p.x][p.y]);
+            Collections.sort(guns[p.x][p.y], Collections.reverseOrder());
+            // System.out.println(guns[p.x][p.y]);
             // System.out.println(guns[p.x][p.y]);
             if (p.gun == 0) {
                 p.gun = guns[p.x][p.y].get(0);
@@ -173,10 +174,10 @@ public class Main {
             } else {
                 // 더 공격력이 센 총을 획득하고 원래 가지고 있던 건 그 자리에 둠
                 if (p.gun < guns[p.x][p.y].get(0)) {
-                    int tmp = guns[p.x][p.y].get(0);
-                    guns[p.x][p.y].remove(0);
                     guns[p.x][p.y].add(p.gun);
-                    p.gun = tmp;
+                    p.gun = guns[p.x][p.y].get(0);
+                    guns[p.x][p.y].remove(0);
+                    // p.gun = tmp;
                 }
             }
         }
