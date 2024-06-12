@@ -120,6 +120,7 @@ public class Main {
                 nx = p.x + dx[nd];
                 ny = p.y + dy[nd];
                 p.dir = nd;
+                if (nx < 0 || nx >= n || ny < 0 || ny >= n || map[nx][ny] != 0) continue;
                 if (map[nx][ny] == 0) break;
                 if (i == 1) canGo = false;
             }
