@@ -14,7 +14,7 @@ public class Main {
     // (?) guns 정보 관리
     static List<Integer>[][] guns;
     // player 정보 관리
-    static Player[] players;
+    static Player[] players; // (1) number
     static int[][] map;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -51,20 +51,12 @@ public class Main {
         for (int round = 0; round < k; round++) {
             // 1 ~ n번 플레이어 순서대로
             for (int i = 1; i < m+1; i++) {
-                // if (round == 1 || round == 2) {
-                //     for (int j = 1; j < m+1; j++) {
-                //         System.out.println(round + " " + i + " [ " + j + " ] " + players[j]);
-                //     }
-                // }
-                // if (round == 2) print();
                 move(i);
                 if (!existPlayer(i)) {
                     getGuns(i);
                 } else {
                     fight(i);
                 }
-                // if (round == 1 || round == 2) print();
-                // if (round == 2) System.out.println(Arrays.toString(ans));
             }
         }
         for (int i = 1; i < m+1; i++) {
@@ -97,7 +89,7 @@ public class Main {
             win = j;
             L = i;
         }
-        // 이긴 플레이어는 각 플레이어의 ?? (초기 능력치 + 총의 공격력)의 차이만큼 포인트 획득
+        // 이긴 플레이어는 각 플레이어의 (초기 능력치 + 총의 공격력)의 차이만큼 포인트 획득
         ans[win] += Math.abs(s1-s2);
         // System.out.println("winner " + win + " " + players[win]);
         // System.out.println("loser " + L + " " + players[L]);
@@ -107,6 +99,7 @@ public class Main {
         guns[loser.x][loser.y].add(loser.gun);
         players[L].gun = 0;
         move2(L);
+
         // 이긴 플레이어는 승리한 칸에 있는 총 중 가장 높은 공격력을 가진 총 획득하고
             // 나머지는 그대로 격자에 두기
         getGuns(win);
@@ -121,9 +114,10 @@ public class Main {
             int nx = p.x + dx[nd];
             int ny = p.y + dy[nd];
             if (nx < 0 || nx >= n || ny < 0 || ny >= n || map[nx][ny] != 0) continue;
+            //  (2) 사람 확인
             else {
                 p.dir = nd;
-                map[p.x][p.y] = 0; // 원래 잇던 곳
+                // map[p.x][p.y] = 0; // 원래 잇던 곳
                 p.x = nx; p.y = ny;
                 map[p.x][p.y] = num; // 일하는 곳
                 break;
@@ -174,7 +168,7 @@ public class Main {
             }
         }
         // 플레이어 정보 업데이트
-        map[p.x][p.y] = k;
+        map[p.x][p.y] = k; // (3) 위치 저장
         // System.out.println(map[p.x][p.y]);
     }
     public static boolean existPlayer(int k) {
