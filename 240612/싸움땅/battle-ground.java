@@ -1,7 +1,11 @@
 import java.util.*;
 import java.io.*;
 public class Main {
-    // 9시 24분
+    // 9시 24분 ~ 12시 50분
+    /*
+        빈칸이 없는 경우 사람이 어떻게 가는지
+        플레이어의 위치
+    */
     // 상 우 하 좌 (오른쪽 90도로 회전, 방향 바꾸기)
     static int[] dx = {-1, 0, 1, 0};
     static int[] dy = {0, 1, 0, -1};
@@ -43,19 +47,24 @@ public class Main {
             players[i] = new Player(x, y, d, s, 0);
             map[x][y] = i;
         }
-        // print();
         ans = new int[m+1];
         for (int round = 0; round < k; round++) {
             // 1 ~ n번 플레이어 순서대로
             for (int i = 1; i < m+1; i++) {
-                // System.out.println("[ " + i + " ] " + players[i]);
+                // if (round == 1 || round == 2) {
+                //     for (int j = 1; j < m+1; j++) {
+                //         System.out.println(round + " " + i + " [ " + j + " ] " + players[j]);
+                //     }
+                // }
+                // if (round == 2) print();
                 move(i);
                 if (!existPlayer(i)) {
                     getGuns(i);
                 } else {
                     fight(i);
                 }
-                // print();
+                // if (round == 1 || round == 2) print();
+                // if (round == 2) System.out.println(Arrays.toString(ans));
             }
         }
         for (int i = 1; i < m+1; i++) {
@@ -88,7 +97,6 @@ public class Main {
             win = j;
             L = i;
         }
-
         // 이긴 플레이어는 각 플레이어의 ?? (초기 능력치 + 총의 공격력)의 차이만큼 포인트 획득
         ans[win] += Math.abs(s1-s2);
         // System.out.println("winner " + win + " " + players[win]);
@@ -98,9 +106,6 @@ public class Main {
         Player loser = players[L];
         guns[loser.x][loser.y].add(loser.gun);
         players[L].gun = 0;
-        // System.out.println("winner " + win + " " + players[win]);
-        // System.out.println("loser " + L + " " + loser);
-
         move2(L);
         // 이긴 플레이어는 승리한 칸에 있는 총 중 가장 높은 공격력을 가진 총 획득하고
             // 나머지는 그대로 격자에 두기
@@ -109,27 +114,26 @@ public class Main {
     public static void move2(int num) {
         Player p = players[num];
         // 본인이 향하고 있는 방향대로 한 칸 이동
-        int nx = p.x + dx[p.dir];
-        int ny = p.y + dy[p.dir];
-        // 다른 플레이어가 있거나 격자 범위 밖이면
+            // 다른 플레이어가 있거나 격자 범위 밖이면
             // 오른쪽으로 90도 회전하여 빈칸 보이는 순간 이동
-        boolean canGo = true;
-        if (nx < 0 || nx >= n || ny < 0 || ny >= n || map[nx][ny] != 0) {
-            for (int i = 0; i < 2; i++) {
-                int nd = (p.dir + 1) % 4;
-                nx = p.x + dx[nd];
-                ny = p.y + dy[nd];
+        for (int i = 0; i < 4; i++) {
+            int nd = (p.dir + i) % 4;
+            int nx = p.x + dx[nd];
+            int ny = p.y + dy[nd];
+            if (nx < 0 || nx >= n || ny < 0 || ny >= n || map[nx][ny] != 0) continue;
+            else {
                 p.dir = nd;
-                if (nx < 0 || nx >= n || ny < 0 || ny >= n || map[nx][ny] != 0) continue;
-                if (map[nx][ny] == 0) break;
-                if (i == 1) canGo = false;
+                map[p.x][p.y] = 0; // 원래 잇던 곳
+                p.x = nx; p.y = ny;
+                map[p.x][p.y] = num; // 일하는 곳
+                break;
             }
         }
-        if (!canGo) return;
         // player 정보 업데이트
-        map[p.x][p.y] = 0;
-        p.x = nx; p.y = ny;
-        map[p.x][p.y] = num;
+        // map[p.x][p.y] = 0;
+        // p.x = nx; p.y = ny;
+        // map[p.x][p.y] = num;
+
         // 이동 후 총 있으면  (2-1) 동작
         getGuns(num);
     }
