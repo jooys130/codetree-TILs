@@ -14,7 +14,7 @@ public class Main {
     // (?) guns 정보 관리
     static List<Integer>[][] guns;
     // player 정보 관리
-    static Player[] players; // (1) number
+    static Player[] players;
     static int[][] map;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -51,19 +51,20 @@ public class Main {
         for (int round = 0; round < k; round++) {
             // 1 ~ n번 플레이어 순서대로
             for (int i = 1; i < m+1; i++) {
-                // 기존 위치 없앰
-                Player p = players[i];
-                map[p.x][p.y] = 0;
+                // if (round == 1 || round == 2) {
+                //     for (int j = 1; j < m+1; j++) {
+                //         System.out.println(round + " " + i + " [ " + j + " ] " + players[j]);
+                //     }
+                // }
+                // if (round == 2) print();
                 move(i);
                 if (!existPlayer(i)) {
-                    // 총 줍기
                     getGuns(i);
-                    // 갱신
-                    p = players[i];
-                    map[p.x][p.y] = i;
                 } else {
                     fight(i);
                 }
+                // if (round == 1 || round == 2) print();
+                // if (round == 2) System.out.println(Arrays.toString(ans));
             }
         }
         for (int i = 1; i < m+1; i++) {
@@ -96,26 +97,19 @@ public class Main {
             win = j;
             L = i;
         }
-        // 이긴 플레이어는 각 플레이어의 (초기 능력치 + 총의 공격력)의 차이만큼 포인트 획득
+        // 이긴 플레이어는 각 플레이어의 ?? (초기 능력치 + 총의 공격력)의 차이만큼 포인트 획득
         ans[win] += Math.abs(s1-s2);
         // System.out.println("winner " + win + " " + players[win]);
         // System.out.println("loser " + L + " " + players[L]);
 
         // 진 플레이어는 총을 해당 격자에 내려두고 원래 가진 방향으로 한 칸 이동
         Player loser = players[L];
-        // ?????? 총 없을 때ㅔ add가 문제라고 ???????????????
-        if (loser.gun != 0) {
-            guns[loser.x][loser.y].add(loser.gun);
-            players[L].gun = 0;
-        }
+        guns[loser.x][loser.y].add(loser.gun);
+        players[L].gun = 0;
         move2(L);
-
         // 이긴 플레이어는 승리한 칸에 있는 총 중 가장 높은 공격력을 가진 총 획득하고
             // 나머지는 그대로 격자에 두기
         getGuns(win);
-        /// 굴러온 애가 이겼을 때
-        Player winner = players[win];
-        map[winner.x][winner.y] = win;
     }
     public static void move2(int num) {
         Player p = players[num];
@@ -127,12 +121,11 @@ public class Main {
             int nx = p.x + dx[nd];
             int ny = p.y + dy[nd];
             if (nx < 0 || nx >= n || ny < 0 || ny >= n || map[nx][ny] != 0) continue;
-            //  (2) 사람 확인
             else {
                 p.dir = nd;
-                // map[p.x][p.y] = 0; // 원래 잇던 곳
+                map[p.x][p.y] = 0; // 원래 잇던 곳
                 p.x = nx; p.y = ny;
-                map[p.x][p.y] = num; // 이동한 곳
+                map[p.x][p.y] = num; // 일하는 곳
                 break;
             }
         }
@@ -157,9 +150,9 @@ public class Main {
             p.dir = nd;
         }
         // player 정보 업데이트
-        // map[p.x][p.y] = 0;
+        map[p.x][p.y] = 0;
         p.x = nx; p.y = ny;
-        // map[p.x][p.y] = num; // 이건싸우고나서 확인하고 난 후
+        // map[p.x][p.y] = num; // 이건 있는지 확인하고 난 후
     }
     public static void getGuns(int k) {
         // 총 있다면 총 획득
@@ -167,22 +160,21 @@ public class Main {
         if (guns[p.x][p.y].size() != 0) {
             Collections.sort(guns[p.x][p.y], Collections.reverseOrder());
             // System.out.println(guns[p.x][p.y]);
-            // System.out.println(guns[p.x][p.y]);
             if (p.gun == 0) {
                 p.gun = guns[p.x][p.y].get(0);
                 guns[p.x][p.y].remove(0);
             } else {
                 // 더 공격력이 센 총을 획득하고 원래 가지고 있던 건 그 자리에 둠
                 if (p.gun < guns[p.x][p.y].get(0)) {
-                    guns[p.x][p.y].add(p.gun);
-                    p.gun = guns[p.x][p.y].get(0);
+                    int tmp = guns[p.x][p.y].get(0);
                     guns[p.x][p.y].remove(0);
-                    // p.gun = tmp;
+                    guns[p.x][p.y].add(p.gun);
+                    p.gun = tmp;
                 }
             }
         }
         // 플레이어 정보 업데이트
-        // map[p.x][p.y] = k; // (?) 위치 저장
+        map[p.x][p.y] = k;
         // System.out.println(map[p.x][p.y]);
     }
     public static boolean existPlayer(int k) {
