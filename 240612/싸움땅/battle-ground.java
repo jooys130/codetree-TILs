@@ -1,17 +1,12 @@
 import java.util.*;
 import java.io.*;
 public class Main {
-    // 9시 24분 ~ 12시 50분
-    /*
-        빈칸이 없는 경우 사람이 어떻게 가는지
-        플레이어의 위치
-    */
     // 상 우 하 좌 (오른쪽 90도로 회전, 방향 바꾸기)
     static int[] dx = {-1, 0, 1, 0};
     static int[] dy = {0, 1, 0, -1};
     static int[] ans;
     static int n, m, k;
-    // (?) guns 정보 관리
+    // guns 정보 관리
     static List<Integer>[][] guns;
     // player 정보 관리
     static Player[] players;
@@ -51,20 +46,12 @@ public class Main {
         for (int round = 0; round < k; round++) {
             // 1 ~ n번 플레이어 순서대로
             for (int i = 1; i < m+1; i++) {
-                // if (round == 1 || round == 2) {
-                //     for (int j = 1; j < m+1; j++) {
-                //         System.out.println(round + " " + i + " [ " + j + " ] " + players[j]);
-                //     }
-                // }
-                // if (round == 2) print();
                 move(i);
                 if (!existPlayer(i)) {
                     getGuns(i);
                 } else {
                     fight(i);
                 }
-                // if (round == 1 || round == 2) print();
-                // if (round == 2) System.out.println(Arrays.toString(ans));
             }
         }
         for (int i = 1; i < m+1; i++) {
@@ -97,18 +84,15 @@ public class Main {
             win = j;
             L = i;
         }
-        // 이긴 플레이어는 각 플레이어의 ?? (초기 능력치 + 총의 공격력)의 차이만큼 포인트 획득
+        // 이긴 플레이어는 각 플레이어의 (초기 능력치 + 총의 공격력)의 차이만큼 포인트 획득
         ans[win] += Math.abs(s1-s2);
-        // System.out.println("winner " + win + " " + players[win]);
-        // System.out.println("loser " + L + " " + players[L]);
 
         // 진 플레이어는 총을 해당 격자에 내려두고 원래 가진 방향으로 한 칸 이동
         Player loser = players[L];
         guns[loser.x][loser.y].add(loser.gun);
         players[L].gun = 0;
         move2(L);
-        // 이긴 플레이어는 승리한 칸에 있는 총 중 가장 높은 공격력을 가진 총 획득하고
-            // 나머지는 그대로 격자에 두기
+        // 이긴 플레이어는 승리한 칸에 있는 총 중 가장 높은 공격력을 가진 총 획득하고 나머지는 그대로
         getGuns(win);
     }
     public static void move2(int num) {
@@ -129,11 +113,6 @@ public class Main {
                 break;
             }
         }
-        // player 정보 업데이트
-        // map[p.x][p.y] = 0;
-        // p.x = nx; p.y = ny;
-        // map[p.x][p.y] = num;
-
         // 이동 후 총 있으면  (2-1) 동작
         getGuns(num);
     }
@@ -175,7 +154,6 @@ public class Main {
         }
         // 플레이어 정보 업데이트
         map[p.x][p.y] = k;
-        // System.out.println(map[p.x][p.y]);
     }
     public static boolean existPlayer(int k) {
         // 해당 칸에 플레이어가 있는지 확인
@@ -193,15 +171,5 @@ public class Main {
             this.cap = cap;
             this.gun = gun;
         }
-        @Override
-        public String toString() {
-            return "( " + x + " " + y + " " + dir + ") " + cap + " " + gun;
-        }
-    }
-    public static void print() {
-        for (int i = 0; i < n; i++) {
-            System.out.println(Arrays.toString(map[i]));
-        }
-        System.out.println();
     }
 }
