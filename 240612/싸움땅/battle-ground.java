@@ -102,8 +102,6 @@ public class Main {
         // System.out.println("loser " + L + " " + loser);
 
         move2(L);
-        // 이동 후 총 있으면  (2-1) 동작
-        getGuns(L);
         // 이긴 플레이어는 승리한 칸에 있는 총 중 가장 높은 공격력을 가진 총 획득하고
             // 나머지는 그대로 격자에 두기
         getGuns(win);
@@ -131,6 +129,8 @@ public class Main {
         map[p.x][p.y] = 0;
         p.x = nx; p.y = ny;
         map[p.x][p.y] = num;
+        // 이동 후 총 있으면  (2-1) 동작
+        getGuns(num);
     }
     public static void move(int num) {
         Player p = players[num];
