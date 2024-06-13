@@ -28,7 +28,7 @@ public class Main {
             // 도망자 종류 두 가지
                 // 좌우로 움직이는 사람 오른쪽 보고 시작
                 // 상하로 움직이는 사람 아래 보고 시작
-            int d = tmp == 1 ? 1 : 0;
+            int d = tmp == 1 ? 1 : 2;
             people[i] = new Node(x, y, d, true);
         }
         for (int i = 0; i < H; i++) {
@@ -40,6 +40,7 @@ public class Main {
         // 나무랑 도망자 중복 위치 가능
         // System.out.println(Arrays.toString(people));
         // System.out.println("초기 술래 " + X + " " + Y + " " + D + " " + reverse);
+
         // for (int q = 0; q < N * N * 2 ; q++) {
         //     moveIt();
         //     System.out.println("다음 술래 " + X + " " + Y + " " + D + " " + reverse);
@@ -47,7 +48,7 @@ public class Main {
         
         for (int i = 0; i < K; i++) {
             for (int j = 0; j < M; j++) {
-                // 거리가 3 이하이고 살아있는 도망자에 대해서
+                // 술래와 거리가 3 이하이고 살아있는 도망자에 대해서
                 if (people[j].alive && getDist(X, people[j].x, Y, people[j].y) <= 3) {
                     moveRunner(j);
                 }
@@ -64,10 +65,12 @@ public class Main {
         Node p = people[num];
         int nx = p.x + dx[p.d];
         int ny = p.y + dy[p.d];
+        // System.out.println(nx + " " + ny);
         if (nx < 0 || nx >= N || ny < 0 || ny >= N) {
             p.d = (p.d + 2) % 4; // 방향 바꾸기
             nx = p.x + dx[p.d];
             ny = p.y + dy[p.d];
+            // System.out.println("왜?" + num + "!! " + nx + " " + ny);
             // 다시 타입 체크 ??
             if (X == nx && Y == ny) return;
             p.x = nx; p.y = ny; // 술래 없을 때 이동
@@ -133,9 +136,10 @@ public class Main {
         // 술래 개수 세고 잡기
         for (int i = 0; i < checkPoint.size(); i++) {
             int[] pos = checkPoint.get(i);
-            // System.out.println(Arrays.toString(pos));
+            // System.out.println("checkPoint" + Arrays.toString(pos));
             for (int num = 0; num < M; num++) {
-                if (people[i].alive && people[num].x == pos[0] && people[num].y == pos[1]) {
+                if (people[num].alive && people[num].x == pos[0] && people[num].y == pos[1]) {
+                    // System.out.println(Arrays.toString(pos) + " <- " + people[num]);
                     runnerCnt++;
                     people[num].alive = false;
                 }
