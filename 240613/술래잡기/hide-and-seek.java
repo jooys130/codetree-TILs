@@ -130,7 +130,7 @@ public class Main {
             int nx = X + dx[D] * i;
             int ny = Y + dy[D] * i;
             // 나무가 있는 칸은 안 보임
-            if (trees[nx][ny]) continue;
+            if (nx < 0 || nx >= N || ny < 0 || ny >= N || trees[nx][ny]) continue;
             checkPoint.add(new int[] {nx, ny});
         }
         // 술래 개수 세고 잡기
