@@ -82,8 +82,8 @@ public class Main {
                 trees[i][j] += tmp[i][j];
             }
         }
-        command("grow");
-        print(trees);
+        // command("grow");
+        // print(trees);
     }
 
     private static void breeding() {
@@ -113,8 +113,8 @@ public class Main {
                 trees[i][j] += tmp[i][j];
             }
         }
-        command("breeding");
-        print(trees);
+        // command("breeding");
+        // print(trees);
     }
 
     private static void spray() {
@@ -143,6 +143,7 @@ public class Main {
         Pos target = candidates.get(0);
         ans += target.count;
         visited[target.x][target.y] = true;
+        trees[target.x][target.y] = 0;
         for (int d = 0; d < 4; d++) {
             for (int size = 1; size <= k; size++) {
                 int nx = target.x + ddx[d] * size;
@@ -152,10 +153,10 @@ public class Main {
                 trees[nx][ny] = 0;
             }
         }
-        command("spary");
-        for (int i = 0; i < n; i++) {
-            System.out.println(Arrays.toString(visited[i]));
-        }
+        // command("spary");
+        // for (int i = 0; i < n; i++) {
+        //     System.out.println(Arrays.toString(visited[i]));
+        // }
     }
 
     private static boolean outOfRange(int x, int y) {
