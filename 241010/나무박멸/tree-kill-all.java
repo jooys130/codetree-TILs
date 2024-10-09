@@ -138,6 +138,7 @@ public class Main {
                 candidates.add(new Pos(i, j, count));
             }
         }
+        if (candidates.size() == 0) return;
         Collections.sort(candidates);
         // 제초제 뿌리기
         Pos target = candidates.get(0);
