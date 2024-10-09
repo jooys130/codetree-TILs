@@ -30,7 +30,7 @@ public class Main {
     }
     static int n, m, k, c;
     static int[][] trees;
-    static boolean[][] visited; // 제초제 기록
+    static int[][] visited; // 제초제 기록을 상수로ㅠㅠㅠㅠㅠ
     static List<Pos> candidates;
     static int ans;
     public static void main(String[] args) throws IOException {
@@ -41,22 +41,23 @@ public class Main {
         k = Integer.parseInt(st.nextToken());
         c = Integer.parseInt(st.nextToken());
         trees = new int[n][n];
-        visited = new boolean[n][n];
+        visited = new int[n][n];
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < n; j++) {
                 trees[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-        int year = 0;
         while (m-->0) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (visited[i][j] > 0) visited[i][j]--;
+                }
+            }
             candidates = new ArrayList<Pos>();
             grow();
             breeding();
             spray();
-            if (year++ == c) {
-                visited = new boolean[n][n];
-            }
         }
         System.out.println(ans);
     }
@@ -65,12 +66,12 @@ public class Main {
         int[][] tmp = new int[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (trees[i][j] == 0 || trees[i][j] == -1) continue;
+                if (trees[i][j] == 0 || trees[i][j] == -1 || visited[i][j] != 0) continue;
                 int count = 0;
                 for (int d = 0; d < 4; d++) {
                     int nx = i + dx[d];
                     int ny = j + dy[d];
-                    if (outOfRange(nx, ny)) continue;
+                    if (outOfRange(nx, ny) || visited[nx][ny] != 0) continue;
                     if (trees[nx][ny] != 0) count++;
                 }
                 tmp[i][j] = count;
@@ -92,13 +93,13 @@ public class Main {
         int[][] tmp = new int[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (trees[i][j] == 0 || trees[i][j] == -1) continue;
+                if (trees[i][j] == 0 || trees[i][j] == -1 || visited[i][j] != 0) continue;
                 int count = 0; // 번식이 가능한 칸의 개수
                 List<int[]> pos = new ArrayList<>();
                 for (int d = 0; d < 4; d++) {
                     int nx = i + dx[d];
                     int ny = j + dy[d];
-                    if (outOfRange(nx, ny) || trees[nx][ny] != 0) continue;
+                    if (outOfRange(nx, ny) || trees[nx][ny] != 0 || visited[nx][ny] != 0) continue;
                     count++;
                     pos.add(new int[] {nx, ny});
                 }
@@ -131,7 +132,7 @@ public class Main {
                     for (int size = 1; size <= k; size++) {
                         int nx = i + ddx[d] * size;
                         int ny = j + ddy[d] * size;
-                        if (outOfRange(nx, ny) || trees[nx][ny] == 0) break;
+                        if (outOfRange(nx, ny) || visited[nx][ny] != 0 || trees[nx][ny] == 0) break;
                         count += trees[nx][ny];
                     }
                 }
@@ -143,14 +144,18 @@ public class Main {
         // 제초제 뿌리기
         Pos target = candidates.get(0);
         ans += target.count;
-        visited[target.x][target.y] = true;
+        visited[target.x][target.y] = Math.max(visited[target.x][target.y], c+1);
         trees[target.x][target.y] = 0;
         for (int d = 0; d < 4; d++) {
             for (int size = 1; size <= k; size++) {
                 int nx = target.x + ddx[d] * size;
                 int ny = target.y + ddy[d] * size;
                 if (outOfRange(nx, ny)) break;
-                visited[nx][ny] = true;
+                if (trees[nx][ny] == 0) {
+                    visited[nx][ny] = Math.max(visited[nx][ny], c+1);
+                    break;
+                }
+                visited[nx][ny] = Math.max(visited[nx][ny], c+1);
                 trees[nx][ny] = 0;
             }
         }
@@ -161,7 +166,7 @@ public class Main {
     }
 
     private static boolean outOfRange(int x, int y) {
-        return x < 0 || x >= n || y < 0 || y >= n || trees[x][y] == -1 || visited[x][y];
+        return x < 0 || x >= n || y < 0 || y >= n || trees[x][y] == -1;
     }
 
     public static void print(int[][] arr) {
