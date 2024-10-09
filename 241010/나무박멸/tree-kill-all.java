@@ -83,8 +83,6 @@ public class Main {
                 trees[i][j] += tmp[i][j];
             }
         }
-        // command("grow");
-        // print(trees);
     }
 
     private static void breeding() {
@@ -93,13 +91,13 @@ public class Main {
         int[][] tmp = new int[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (trees[i][j] == 0 || trees[i][j] == -1 || visited[i][j] != 0) continue;
+                if (trees[i][j] <= 0) continue;
                 int count = 0; // 번식이 가능한 칸의 개수
                 List<int[]> pos = new ArrayList<>();
                 for (int d = 0; d < 4; d++) {
                     int nx = i + dx[d];
                     int ny = j + dy[d];
-                    if (outOfRange(nx, ny) || trees[nx][ny] != 0 || visited[nx][ny] != 0) continue;
+                    if (outOfRange(nx, ny) || trees[nx][ny] != 0 || visited[nx][ny] > 0) continue;
                     count++;
                     pos.add(new int[] {nx, ny});
                 }
@@ -114,8 +112,6 @@ public class Main {
                 trees[i][j] += tmp[i][j];
             }
         }
-        // command("breeding");
-        // print(trees);
     }
 
     private static void spray() {
@@ -132,7 +128,7 @@ public class Main {
                     for (int size = 1; size <= k; size++) {
                         int nx = i + ddx[d] * size;
                         int ny = j + ddy[d] * size;
-                        if (outOfRange(nx, ny) || visited[nx][ny] != 0 || trees[nx][ny] == 0) break;
+                        if (outOfRange(nx, ny) || trees[nx][ny] == 0) break;
                         count += trees[nx][ny];
                     }
                 }
@@ -144,7 +140,7 @@ public class Main {
         // 제초제 뿌리기
         Pos target = candidates.get(0);
         ans += target.count;
-        visited[target.x][target.y] = Math.max(visited[target.x][target.y], c+1);
+        visited[target.x][target.y] = c+1;
         trees[target.x][target.y] = 0;
         for (int d = 0; d < 4; d++) {
             for (int size = 1; size <= k; size++) {
@@ -152,17 +148,13 @@ public class Main {
                 int ny = target.y + ddy[d] * size;
                 if (outOfRange(nx, ny)) break;
                 if (trees[nx][ny] == 0) {
-                    visited[nx][ny] = Math.max(visited[nx][ny], c+1);
+                    visited[nx][ny] = c+1;
                     break;
                 }
-                visited[nx][ny] = Math.max(visited[nx][ny], c+1);
+                visited[nx][ny] = c+1;
                 trees[nx][ny] = 0;
             }
         }
-        // command("spary");
-        // for (int i = 0; i < n; i++) {
-        //     System.out.println(Arrays.toString(visited[i]));
-        // }
     }
 
     private static boolean outOfRange(int x, int y) {
