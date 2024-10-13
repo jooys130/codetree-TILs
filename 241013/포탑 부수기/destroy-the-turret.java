@@ -142,7 +142,7 @@ public class Main {
         if (map[attacked.x][attacked.y] < 0) map[attacked.x][attacked.y] = 0;
         // attacked.value -= attacker.value;
         checked[attacked.x][attacked.y] = true;
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 9; i++) {
             // 추가 피해가 반대편 격자까지
             int nx = attacked.x + dx[i];
             int ny = attacked.y + dy[i];
