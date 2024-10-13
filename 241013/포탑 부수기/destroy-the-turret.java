@@ -2,8 +2,8 @@ import java.util.*;
 import java.io.*;
 public class Main {
     // 우 하 좌 상
-    static int[] dx = {0, 1, 0, -1, -1, -1, 1, 1};
-    static int[] dy = {1, 0, -1, 0, -1, 1, -1, 1};
+    static int[] dx = {0, 1, 0, -1, -1, -1, 1, 1, 0};
+    static int[] dy = {1, 0, -1, 0, -1, 1, -1, 1, 0};
     static int N, M, K;
     static int[][] map;
     static int turn;
@@ -144,16 +144,18 @@ public class Main {
         checked[attacked.x][attacked.y] = true;
         for (int i = 0; i < 9; i++) {
             // 추가 피해가 반대편 격자까지
-            int nx = attacked.x + dx[i];
-            int ny = attacked.y + dy[i];
-            if (nx < 0) nx = N - 1;
-            if (nx >= N) nx = 0;
-            if (ny < 0 ) ny = M-1;
-            if (ny >= M) ny = 0;
-            if (map[nx][ny] <= 0) continue;
-            map[nx][ny] -= attacker.value / 2;
-            if (map[nx][ny] < 0) map[nx][ny] = 0;
-            checked[nx][ny] = true;
+            int nx = (attacked.x + dx[i] + N) % N;
+            int ny = (attacked.y + dy[i] + M) % M;
+            if (nx == attacker.x && ny == attacker.y) continue;
+            if (nx == attacked.x && ny == attacked.y) {
+                map[nx][ny] -= attacker.value;
+                if (map[nx][ny] < 0) map[nx][ny] = 0;
+                checked[nx][ny] = true;
+            } else {
+                map[nx][ny] -= attacker.value / 2;
+                if (map[nx][ny] < 0) map[nx][ny] = 0;
+                checked[nx][ny] = true;
+            }
         }
     }
     static class Node implements Comparable<Node>{
